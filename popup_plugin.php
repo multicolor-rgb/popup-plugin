@@ -56,6 +56,17 @@ function popup_settings()
 	if (isset($_GET['delete'])) {
 		$pop->del();
 	};
+
+
+	echo '<div class="sponsor" style="width:100%;padding:10px;text-align:center;background:#fafafa;border:solid 1px #ddd;box-sizing:border-box; margin-top:10px;">
+    <p class="lead" style="margin:5px;">Buy me ☕ if you want to see new plugins :) </p>
+    <a href="https://www.paypal.com/donate/?hosted_button_id=TW6PXVCTM5A72">
+    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"  />
+    </a>
+    </div>
+    ';
+  
+
 }
 
 
