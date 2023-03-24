@@ -22,7 +22,7 @@ queue_style('popupstyle', GSFRONT);
 # activate filter 
 
 # add a link in the admin tab 'theme'
-add_action('pages-sidebar', 'createSideMenu', array($thisfile, 'Popup settings'));
+add_action('pages-sidebar', 'createSideMenu', array($thisfile, 'Popup Plugin 🐱‍👤'));
 
 # functions
 
@@ -76,7 +76,7 @@ function showPopup($name)
 	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
 	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
 
-	echo '<div id="modal" class="popup-'.$name.'">
+	echo '<div id="modal" class="popup-'.$name.'" style="display:none;">
 	<div class="modal-background"></div>
 	<div class="modal">
 		<div class="modal-header">
@@ -167,7 +167,7 @@ function runPopupShortcode($matches)
 	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
 	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
 
-	$html = '<div id="modal" class="popup-'.$name.'">
+	$html = '<div id="modal" class="popup-'.$name.'" style="display:none;">
 	<div class="modal-background"></div>
 	<div class="modal">
 		<div class="modal-header">

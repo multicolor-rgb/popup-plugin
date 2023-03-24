@@ -1,7 +1,7 @@
 <style>
     .list-item {
         display: grid;
-        grid-template-columns: 200px 1fr 100px;
+        grid-template-columns: 200px 1fr 120px;
         width: 100%;
         background: #fafafa;
         box-sizing: border-box;
