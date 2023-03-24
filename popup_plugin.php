@@ -1,41 +1,228 @@
 <?php
 
 # get correct id for plugin
-$thisfile=basename(__FILE__, ".php");
- 
+$thisfile = basename(__FILE__, ".php");
+
 # register plugin
 register_plugin(
 	$thisfile, //Plugin id
 	'Popup plugin', 	//Plugin name
-	'1.2', 		//Plugin version
+	'2.0', 		//Plugin version
 	'Mateusz Skrzypczak',  //Plugin author
 	'http://www.multicolor.ovh', //author website
 	'Popup plugin for your website', //Plugin description
 	'pages', //page type - on which admin tab to display
 	'popup_settings'  //main function (administration)
 );
- 
 
 
-register_script('popupscript', $SITEURL.'plugins/popup_plugin/js/script.js', '1.0',TRUE);
-queue_script('popupscript',GSFRONT); 
-register_style('popupstyle', $SITEURL.'plugins/popup_plugin/css/popupstyle.css', GSVERSION, 'screen');
-queue_style('popupstyle',GSFRONT); 
+
+register_style('popupstyle', $SITEURL . 'plugins/popup_plugin/css/popupstyle.css', GSVERSION, 'screen');
+queue_style('popupstyle', GSFRONT);
 # activate filter 
-add_action('theme-footer','popup_footer'); 
- 
+
 # add a link in the admin tab 'theme'
-add_action('pages-sidebar','createSideMenu',array($thisfile,'Popup settings'));
- 
+add_action('pages-sidebar', 'createSideMenu', array($thisfile, 'Popup settings'));
+
 # functions
 
 
+require GSPLUGINPATH . 'popup_plugin/popup.class.php';
+$pop = new Popup();
 
-function popup_footer() {
-    include('popup_plugin/popupfront.php');
+
+function popup_settings()
+{
+
+	global $pop;
+
+	global $SITEURL;
+	global $GSADMIN;
+
+	if (isset($_GET['addnew'])) {
+		include('popup_plugin/addnew.inc.php');
+	} elseif (isset($_GET['edit'])) {
+		$Json = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $_GET['edit'] . '.json'), true);
+		$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $_GET['edit'] . '.txt');
+		include('popup_plugin/addnew.inc.php');
+	} else {
+		include('popup_plugin/list.inc.php');
+	}
+
+	if (isset($_POST['submitPopup'])) {
+		$pop->create();
+	}
+
+	if (isset($_GET['delete'])) {
+		$pop->del();
+	};
 }
+
+
+function showPopup($name)
+{
+
+	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
+	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
+
+	echo '<div id="modal" class="popup-'.$name.'">
+	<div class="modal-background"></div>
+	<div class="modal">
+		<div class="modal-header">
+			<h3>' . $contentJson['settings'][0]['title'] . '</h3>
+			<div class="modal-close">
+				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAdVBMVEUAAABNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU0N3NIOAAAAJnRSTlMAAQIDBAUGBwgRFRYZGiEjQ3l7hYaqtLm8vsDFx87a4uvv8fP1+bbY9ZEAAAB8SURBVBhXXY5LFoJAAMOCIP4VBRXEv5j7H9HFDOizu2TRFljedgCQHeocWHVaAWStXnKyl2oVWI+kd1XLvFV1D7Ng3qrWKYMZ+MdEhk3gbhw59KvlH0eTnf2mgiRwvQ7NW6aqNmncukKhnvo/zzlQ2PR/HgsAJkncH6XwAcr0FUY5BVeFAAAAAElFTkSuQmCC" width="16" height="16" alt="">
+			</div>
+		</div> 
+		<div class="modal-content">
+' . $content . '
+		</div>
+	</div>
+	</div>';
+
+
+	echo '<script>
+	/*close modal */
+document.querySelector(".modal-close").addEventListener("click",()=>{
+document.querySelector(".popup-'.$name.'").style.display="none";
+let popupDate = "' . $contentJson['settings'][0]['date'] . '";
+document.cookie = "' . $name . 'Popup=' . $contentJson['settings'][0]['showAgain'] . '; path=/ ; expires=" + popupDate + ";";
+	const cookies = document.cookie.split(/; */);
  
-function popup_settings() {
-include('popup_plugin/popupsettings.php');
-}
-?>
+});
+
+
+
+function showCookie(name) {
+	if (document.cookie !== "") {
+		const cookies = document.cookie.split(/; */);
+
+		for (let i = 0; i < cookies.length; i++) {
+			const cookieName = cookies[i].split("=")[0];
+			const cookieVal = cookies[i].split("=")[1];
+			if (cookieName === decodeURIComponent(name)) {
+				return decodeURIComponent(cookieVal);
+			}
+		}
+	};
+};
+
+
+window.onload = () => {
+
+	const argumenter = showCookie("' . $name . 'Popup");
+ 
+	const OnOff = "' . $contentJson['settings'][0]['checkbox'] . '";
+ 
+	if (OnOff == "turnon") {
+		document.querySelector(".popup-'.$name.'").style.display="block";	 
+		
+		if (argumenter=="yes" || argumenter == undefined){
+			document.querySelector(".popup-'.$name.'").style.display="block";
+		}else{
+			document.querySelector(".popup-'.$name.'").style.display="none";
+		}
+	 
+	} else {
+		document.querySelector(".popup-'.$name.'").style.display="none";
+
+	};
+
+
+};
+
+</script>';
+};
+
+
+add_action('theme-header', 'pageBeginPopupPlugin');
+function pageBeginPopupPlugin()
+{
+	global $content;
+	$newcontent = preg_replace_callback(
+		'/\\[% popup=(.*) %\\]/i',
+		'runPopupShortcode',
+		$content
+	);
+	$content = $newcontent;
+};
+
+
+function runPopupShortcode($matches)
+{
+
+	$name = $matches[1];
+
+	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
+	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
+
+	$html = '<div id="modal" class="popup-'.$name.'">
+	<div class="modal-background"></div>
+	<div class="modal">
+		<div class="modal-header">
+			<h3>' . $contentJson['settings'][0]['title'] . '</h3>
+			<div class="modal-close">
+				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAdVBMVEUAAABNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU0N3NIOAAAAJnRSTlMAAQIDBAUGBwgRFRYZGiEjQ3l7hYaqtLm8vsDFx87a4uvv8fP1+bbY9ZEAAAB8SURBVBhXXY5LFoJAAMOCIP4VBRXEv5j7H9HFDOizu2TRFljedgCQHeocWHVaAWStXnKyl2oVWI+kd1XLvFV1D7Ng3qrWKYMZ+MdEhk3gbhw59KvlH0eTnf2mgiRwvQ7NW6aqNmncukKhnvo/zzlQ2PR/HgsAJkncH6XwAcr0FUY5BVeFAAAAAElFTkSuQmCC" width="16" height="16" alt="">
+			</div>
+		</div> 
+		<div class="modal-content">
+' . $content . '
+		</div>
+	</div>
+	</div>';
+
+
+	$html .=  '<script>
+	/*close modal */
+document.querySelector(".modal-close").addEventListener("click",()=>{
+document.querySelector(".popup-'.$name.'").style.display="none";
+let popupDate = "' . $contentJson['settings'][0]['date'] . '";
+document.cookie = "' . $name . 'Popup=' . $contentJson['settings'][0]['showAgain'] . '; path=/ ; expires=" + popupDate + ";";
+	const cookies = document.cookie.split(/; */);
+ 
+});
+
+
+
+function showCookie(name) {
+	if (document.cookie !== "") {
+		const cookies = document.cookie.split(/; */);
+
+		for (let i = 0; i < cookies.length; i++) {
+			const cookieName = cookies[i].split("=")[0];
+			const cookieVal = cookies[i].split("=")[1];
+			if (cookieName === decodeURIComponent(name)) {
+				return decodeURIComponent(cookieVal);
+			}
+		}
+	};
+};
+
+
+window.onload = () => {
+
+	const argumenter = showCookie("' . $name . 'Popup");
+ 
+	const OnOff = "' . $contentJson['settings'][0]['checkbox'] . '";
+ 
+	if (OnOff == "turnon") {
+		document.querySelector(".popup-'.$name.'").style.display="block";	 
+		
+		if (argumenter=="yes" || argumenter == undefined){
+			document.querySelector(".popup-'.$name.'").style.display="block";
+		}else{
+			document.querySelector(".popup-'.$name.'").style.display="none";
+		}
+	 
+	} else {
+		document.querySelector(".popup-'.$name.'").style.display="none";
+
+	};
+
+
+};
+
+</script>';
+
+	return $html;
+};
