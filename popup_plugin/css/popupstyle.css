@@ -18,7 +18,7 @@ width: 100%;
   margin: auto;
   display: block;	
   max-width: 50vw;
-  height: 460px;
+  height: 560px;
   background-color: #fff;
   box-sizing: border-box;
   z-index: 9999;
@@ -27,11 +27,15 @@ width: 100%;
 @media(max-width:768px){
 .modal{
   max-width: 80vw;
+  height:80vh;
+}
+.modal-content{
+  height: 53vh;
 }
 }
 
 .modal-content{
- height: 400px;
+  height: 560px;
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
