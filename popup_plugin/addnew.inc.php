@@ -74,21 +74,7 @@
 																															};
 																															?> />
 
-
- 	<div style="width:100%;
-	border:solid 1px #ddd;display:flex; align-items:center;justify-content:space-between;padding:5px;box-sizing:border-box;color:#fff;background:#CF3805;margin-bottom:10px;">
- 		<label for="popup-checkbox" style="margin:0;padding:0;color:#fff;" value="turnon">Turn on?</label>
-
- 		<input type="checkbox" id="popup-checkbox" name="popup-checkbox" value="turnon" class="popupCheck" <?php
-
-																											if (isset($_GET['edit'])) {
-																												echo ($Json['settings'][0]['checkbox'] == 'turnon' ? 'checked="true"' : '');
-																											};
-																											?> />
-
-
-
- 	</div>
+ 
  	<label style="margin-bottom:10px;padding:0;">Title popup</label>
  	<input type="text" placeholder="title" name="title" class="popup-title" <?php
 																				if (isset($_GET['edit'])) {

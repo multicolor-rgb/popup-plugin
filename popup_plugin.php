@@ -76,7 +76,7 @@ function showPopup($name)
 	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
 	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
 
-	echo '<div id="modal" class="popup-'.$name.'" style="display:none;">
+	echo '<div id="modal" class="popup-'.$name.'" >
 	<div class="modal-background"></div>
 	<div class="modal">
 		<div class="modal-header">
@@ -92,7 +92,7 @@ function showPopup($name)
 	</div>';
 
 
-	echo '<script>
+	echo '<script async>
 	/*close modal */
 document.querySelector(".modal-close").addEventListener("click",()=>{
 document.querySelector(".popup-'.$name.'").style.display="none";
@@ -119,28 +119,19 @@ function showCookie(name) {
 };
 
 
-window.onload = () => {
+ 
 
 	const argumenter = showCookie("' . $name . 'Popup");
  
-	const OnOff = "' . $contentJson['settings'][0]['checkbox'] . '";
  
-	if (OnOff == "turnon") {
-		document.querySelector(".popup-'.$name.'").style.display="block";	 
-		
-		if (argumenter=="yes" || argumenter == undefined){
-			document.querySelector(".popup-'.$name.'").style.display="block";
-		}else{
-			document.querySelector(".popup-'.$name.'").style.display="none";
-		}
-	 
-	} else {
+ 
+	if (argumenter=="yes" || argumenter == undefined){
+		document.querySelector(".popup-'.$name.'").style.display="block";
+	}else{
 		document.querySelector(".popup-'.$name.'").style.display="none";
+	}
 
-	};
-
-
-};
+ 
 
 </script>';
 };
@@ -167,7 +158,7 @@ function runPopupShortcode($matches)
 	$content = file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.txt');
 	$contentJson = json_decode(file_get_contents(GSPLUGINPATH . 'popup_plugin/popuplist/' . $name . '.json'), true);
 
-	$html = '<div id="modal" class="popup-'.$name.'" style="display:none;">
+	$html = '<div id="modal" class="popup-'.$name.'"  >
 	<div class="modal-background"></div>
 	<div class="modal">
 		<div class="modal-header">
@@ -183,7 +174,7 @@ function runPopupShortcode($matches)
 	</div>';
 
 
-	$html .=  '<script>
+	$html .=  '<script async>
 	/*close modal */
 document.querySelector(".modal-close").addEventListener("click",()=>{
 document.querySelector(".popup-'.$name.'").style.display="none";
@@ -210,28 +201,17 @@ function showCookie(name) {
 };
 
 
-window.onload = () => {
-
-	const argumenter = showCookie("' . $name . 'Popup");
+const argumenter = showCookie("' . $name . 'Popup");
  
-	const OnOff = "' . $contentJson['settings'][0]['checkbox'] . '";
  
-	if (OnOff == "turnon") {
-		document.querySelector(".popup-'.$name.'").style.display="block";	 
-		
-		if (argumenter=="yes" || argumenter == undefined){
-			document.querySelector(".popup-'.$name.'").style.display="block";
-		}else{
-			document.querySelector(".popup-'.$name.'").style.display="none";
-		}
-	 
-	} else {
-		document.querySelector(".popup-'.$name.'").style.display="none";
-
-	};
+ 
+if (argumenter=="yes" || argumenter == undefined){
+	document.querySelector(".popup-'.$name.'").style.display="block";
+}else{
+	document.querySelector(".popup-'.$name.'").style.display="none";
+}
 
 
-};
 
 </script>';
 
